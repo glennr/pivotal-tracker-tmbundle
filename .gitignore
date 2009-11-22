@@ -1,3 +1,2 @@
-config/*.yml
-website/dist
+features
 .DS_Store

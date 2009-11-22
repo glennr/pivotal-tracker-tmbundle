@@ -1,46 +1,31 @@
 require "pickler"
 
 class SaveAndSlurpCommand
-  attr_reader :story_parser, :results
+  attr_reader :results, :pickler
   
   def initialize(file_path, project_path, document)
-    
-    pickler = Pickler.new(project_path)
-    
-    feature = pickler.feature(file_path)
-    puts "Feat file : " + feature.filename
-    
-    feature.upload
-    
-    story = feature.story
-    
-    puts "Story is: " + feature.story.to_s
-    #Pickler::run(['upload'])
-    
-    #pickler.feature(arg).push
-    
-    #Story.story_defaults(project_path)
-    #@story_parser = StoryParser.new(file_path, document)
+    @pickler = Pickler.new(project_path)
   end
   
-  def save
+  def save(file_path)
     @results = {}
-    stories.each do |story|
-      # story - see if it already exists by name
-      if story.save
-        # TODO - :created vs :updated
-        @results[:created] ||= 0
-        @results[:created] += 1
-      else
-        @results[:errors] ||= 0
-        @results[:errors] += 1
-      end
+    
+    feature = @pickler.feature(file_path)
+    
+    if feature.upload
+      # TODO - :created vs :updated
+      @results[:created] ||= 0
+      @results[:created] += 1
+    else
+      @results[:errors] ||= 0
+      @results[:errors] += 1
     end
+
   end
   
-  def stories
-    story_parser.stories
-  end
+  #def stories
+  #  story_parser.stories
+  #end
   
   def tooltip_output
     output = "#{@results[:created] || 0} created. #{@results[:updated] || 0} updated."
@@ -51,6 +36,6 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   command = SaveAndSlurpCommand.new(ENV['TM_FILENAME'], ENV['TM_PROJECT_DIRECTORY'], STDIN.read)
-  command.save
+  command.save(ENV['TM_FILENAME'])
   print command.tooltip_output
 end

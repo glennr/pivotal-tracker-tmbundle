@@ -1,6 +1,15 @@
 require 'date'
 require 'cgi'
-      
+
+$:.unshift(File.dirname(__FILE__) + "/../../vendor/rails/activesupport/lib")
+begin
+  require 'active_support'
+  require "active_support/core_ext/string/inflections"
+  require "active_support/core_ext/hash/conversions"
+rescue LoadError => e
+  raise "You need to pull down Support/vendor/rails/activesupport/"
+end
+
 class Pickler
   class Tracker
 
@@ -13,7 +22,6 @@ class Pickler
     attr_reader :token
 
     def initialize(token, ssl = false)
-      #require 'active_support'
       @token = token
       @ssl = ssl
     end
