@@ -1,11 +1,26 @@
-require "story_parser"
+require "pickler"
 
 class SaveAndSlurpCommand
   attr_reader :story_parser, :results
   
   def initialize(file_path, project_path, document)
-    Story.story_defaults(project_path)
-    @story_parser = StoryParser.new(file_path, document)
+    
+    pickler = Pickler.new(project_path)
+    
+    feature = pickler.feature(file_path)
+    puts "Feat file : " + feature.filename
+    
+    feature.upload
+    
+    story = feature.story
+    
+    puts "Story is: " + feature.story.to_s
+    #Pickler::run(['upload'])
+    
+    #pickler.feature(arg).push
+    
+    #Story.story_defaults(project_path)
+    #@story_parser = StoryParser.new(file_path, document)
   end
   
   def save
